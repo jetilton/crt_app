@@ -12,7 +12,7 @@ def get_locations(data):
     locations.sort()
     return {'locations':locations}
 
-def get_dataset(df, location):
+def get_dataset(df, location, data_column_name):
     data = df[df.location == location].copy()
     alternatives = list(set(data['alternative']))
     data = data.drop('location', 1)
@@ -30,15 +30,16 @@ def get_dataset(df, location):
     
     source = ColumnDataSource(data = {'x':[data.plotting_positions[alternative] 
                                                 for alternative in alternatives], 
-                                      'y':[data.kcfs[alternative] 
+                                      'y':[data[data_column_name][alternative] 
                                                 for alternative in alternatives],
                                       'legend':alternatives,
                                       'colors':mypalette})
     
     return source
 
-def make_plot(source):
+def make_plot(source, title):
     p = figure(width=1000, height=500) 
+    p.title.text = title
     p.multi_line(   
                     'x',
                     'y',
@@ -51,24 +52,25 @@ def make_plot(source):
     return p
 
 def update_plot(attrname, old, new):
-    location = location_select.value
-    src = get_dataset(df,location)
-    source.data.update(src.data)
+    location_maxOutFlow = location_select_maxOutFlow.value
+    src_maxOutFlow = get_dataset(df_maxOutFlow,location_maxOutFlow, 'kcfs')
+    source_maxOutFlow.data.update(src_maxOutFlow.data)
 
-df = pd.read_csv(join(dirname(__file__), 'data/test_run/maxOutFlow.csv' ), index_col = 0)
+
  
 location = 'THE DALLES'
-locations = get_locations(df)
-location_select = Select(value=location, title='locations', options=locations['locations'])
-source = get_dataset(df, location)
-plot = make_plot(source)
-location_select.on_change('value', update_plot)
 
 
-controls = column(location_select)
+df_maxOutFlow = pd.read_csv(join(dirname(__file__), 'data/test_run/maxOutFlow.csv' ), index_col = 0)
+locations_maxOutFlow = get_locations(df_maxOutFlow)
+location_select_maxOutFlow = Select(value=location, title='locations', options=locations_maxOutFlow['locations'])
+source_maxOutFlow = get_dataset(df_maxOutFlow, location, 'kcfs')
+plot_maxOutFlow = make_plot(source_maxOutFlow, 'Max Outflow')
+location_select_maxOutFlow.on_change('value', update_plot)
 
 
-curdoc().add_root(row(controls, plot))
+
+curdoc().add_root(row(location_select_maxOutFlow, plot_maxOutFlow))
 curdoc().title = "Max Outflow"
 
 
