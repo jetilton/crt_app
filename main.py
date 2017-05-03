@@ -59,6 +59,10 @@ def update_plot(attrname, old, new):
     location_poolDraft = location_select_poolDraft.value
     src_poolDraft = get_dataset(df_poolDraft,location_poolDraft, 'MAF')
     source_poolDraft.data.update(src_poolDraft.data)
+    
+    location_poolMaxDraft = location_select_poolMaxDraft.value
+    src_poolMaxDraft = get_dataset(df_poolMaxDraft,location_poolMaxDraft, 'MAF')
+    source_poolMaxDraft.data.update(src_poolMaxDraft.data)
  
 location = 'LIBBY'
 
@@ -77,11 +81,24 @@ source_poolDraft = get_dataset(df_poolDraft, location, 'MAF')
 plot_poolDraft = make_plot(source_poolDraft, 'Pool Draft')
 location_select_poolDraft.on_change('value', update_plot)
 
+df_poolMaxDraft = pd.read_csv(join(dirname(__file__), 'data/test_run/poolMaxDraft.csv' ), index_col = 0)
+locations_poolMaxDraft = get_locations(df_poolMaxDraft)
+location_select_poolMaxDraft = Select(value=location, title='locations', options=locations_poolMaxDraft['locations'])
+source_poolMaxDraft = get_dataset(df_poolMaxDraft, location, 'MAF')
+plot_poolMaxDraft = make_plot(source_poolMaxDraft, 'Pool Max Draft')
+location_select_poolMaxDraft.on_change('value', update_plot)
+
+
+
 curdoc().add_root(
-                    layout([
-                            [location_select_maxOutFlow, plot_maxOutFlow],
-                            [location_select_poolDraft, plot_poolDraft]
-                            ])
+                    layout
+                        (
+                            [
+                                [location_select_maxOutFlow, plot_maxOutFlow],
+                                [location_select_poolDraft, plot_poolDraft],
+                                [location_select_poolMaxDraft, plot_poolMaxDraft]
+                            ]
+                        )
                     )
 curdoc().title = "CRT"
 
