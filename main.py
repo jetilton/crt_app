@@ -4,7 +4,7 @@ from bokeh.models import Select
 from bokeh.models import Range1d, ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.palettes import Spectral11
-from bokeh.layouts import row, column
+from bokeh.layouts import layout
 from os.path import join, dirname
 
 def get_locations(data):
@@ -56,9 +56,11 @@ def update_plot(attrname, old, new):
     src_maxOutFlow = get_dataset(df_maxOutFlow,location_maxOutFlow, 'kcfs')
     source_maxOutFlow.data.update(src_maxOutFlow.data)
 
-
+    location_poolDraft = location_select_poolDraft.value
+    src_poolDraft = get_dataset(df_poolDraft,location_poolDraft, 'MAF')
+    source_poolDraft.data.update(src_poolDraft.data)
  
-location = 'THE DALLES'
+location = 'LIBBY'
 
 
 df_maxOutFlow = pd.read_csv(join(dirname(__file__), 'data/test_run/maxOutFlow.csv' ), index_col = 0)
@@ -68,10 +70,20 @@ source_maxOutFlow = get_dataset(df_maxOutFlow, location, 'kcfs')
 plot_maxOutFlow = make_plot(source_maxOutFlow, 'Max Outflow')
 location_select_maxOutFlow.on_change('value', update_plot)
 
+df_poolDraft = pd.read_csv(join(dirname(__file__), 'data/test_run/poolDraft.csv' ), index_col = 0)
+locations_poolDraft = get_locations(df_poolDraft)
+location_select_poolDraft = Select(value=location, title='locations', options=locations_poolDraft['locations'])
+source_poolDraft = get_dataset(df_poolDraft, location, 'MAF')
+plot_poolDraft = make_plot(source_poolDraft, 'Pool Draft')
+location_select_poolDraft.on_change('value', update_plot)
 
-
-curdoc().add_root(row(location_select_maxOutFlow, plot_maxOutFlow))
-curdoc().title = "Max Outflow"
+curdoc().add_root(
+                    layout([
+                            [location_select_maxOutFlow, plot_maxOutFlow],
+                            [location_select_poolDraft, plot_poolDraft]
+                            ])
+                    )
+curdoc().title = "CRT"
 
 
 
