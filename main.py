@@ -63,6 +63,15 @@ def update_plot(attrname, old, new):
     location_poolMaxDraft = location_select_poolMaxDraft.value
     src_poolMaxDraft = get_dataset(df_poolMaxDraft,location_poolMaxDraft, 'MAF')
     source_poolMaxDraft.data.update(src_poolMaxDraft.data)
+    
+    location_poolElevation = location_select_poolElevation.value
+    src_poolElevation = get_dataset(df_poolElevation,location_poolElevation, 'Elevation')
+    source_poolElevation.data.update(src_poolElevation.data)
+    
+    location_poolMaxElevation = location_select_poolMaxElevation.value
+    src_poolMaxElevation = get_dataset(df_poolMaxElevation,location_poolMaxElevation, 'Elevation')
+    source_poolMaxElevation.data.update(src_poolMaxElevation.data)
+   
  
 location = 'LIBBY'
 
@@ -88,7 +97,19 @@ source_poolMaxDraft = get_dataset(df_poolMaxDraft, location, 'MAF')
 plot_poolMaxDraft = make_plot(source_poolMaxDraft, 'Pool Max Draft')
 location_select_poolMaxDraft.on_change('value', update_plot)
 
+df_poolElevation = pd.read_csv(join(dirname(__file__), 'data/test_run/poolElevation.csv' ), index_col = 0)
+locations_poolElevation = get_locations(df_poolElevation)
+location_select_poolElevation = Select(value=location, title='locations', options=locations_poolElevation['locations'])
+source_poolElevation = get_dataset(df_poolElevation, location, 'Elevation')
+plot_poolElevation = make_plot(source_poolElevation, 'Pool Elevation')
+location_select_poolElevation.on_change('value', update_plot)
 
+df_poolMaxElevation = pd.read_csv(join(dirname(__file__), 'data/test_run/poolMaxElevation.csv' ), index_col = 0)
+locations_poolMaxElevation = get_locations(df_poolMaxElevation)
+location_select_poolMaxElevation = Select(value=location, title='locations', options=locations_poolMaxElevation['locations'])
+source_poolMaxElevation = get_dataset(df_poolMaxElevation, location, 'Elevation')
+plot_poolMaxElevation = make_plot(source_poolMaxElevation, 'Pool Max Elevation')
+location_select_poolMaxElevation.on_change('value', update_plot)
 
 curdoc().add_root(
                     layout
@@ -96,7 +117,9 @@ curdoc().add_root(
                             [
                                 [location_select_maxOutFlow, plot_maxOutFlow],
                                 [location_select_poolDraft, plot_poolDraft],
-                                [location_select_poolMaxDraft, plot_poolMaxDraft]
+                                [location_select_poolMaxDraft, plot_poolMaxDraft],
+                                [location_select_poolElevation, plot_poolElevation],
+                                [location_select_poolMaxElevation, plot_poolMaxElevation]
                             ]
                         )
                     )
