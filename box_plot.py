@@ -30,15 +30,14 @@ def outliers(group):
 out = groups.apply(outliers).dropna()
 
 # prepare outlier data for plotting, we need coordinates for every outlier.
-if not out.empty:
-    outx = []
-    outy = []
-    for alternative in alternatives:
-        # only add outliers if they exist
-        if not out.loc[alternative].empty:
-            for value in out[alternative]:
-                outx.append(alternative)
-                outy.append(value)
+outx = []
+outy = []
+for alternative in alternatives:
+    # only add outliers if they exist
+    if not out.loc[alternative].empty:
+        for value in out[alternative]:
+            outx.append(alternative)
+            outy.append(value)
 
 p = figure(tools="save", background_fill_color="#EFE8E2", title="", x_range=alternatives)
 

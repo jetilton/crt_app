@@ -13,8 +13,9 @@ def get_locations(data):
     locations.sort()
     return {'locations':locations}
 
-def get_dataset(df, location, data_column_name):
+def get_dataset(df, location, unit):
     data = df[df.location == location].copy()
+    data_boxplot = data.copy()
     alternatives = list(set(data['alternative']))
     data = data.drop('location', 1)
     number_of_alternatives = len(alternatives)
@@ -29,18 +30,76 @@ def get_dataset(df, location, data_column_name):
     data.set_index('alternative', append = True, inplace = True)
     data = data.unstack()
     
-    source = ColumnDataSource(
+    source_ace = ColumnDataSource(
                                 data = {
                                         'x':[data.plotting_positions[alternative] 
                                                 for alternative in alternatives], 
-                                        'y':[data[data_column_name][alternative] 
+                                        'y':[data[unit][alternative] 
                                                 for alternative in alternatives],
                                         'legend':alternatives,
                                         'colors':mypalette
                                       }
                                 )
     
-    return source
+    
+    groups = data_boxplot.groupby('alternative')
+    q1 = groups.quantile(q=0.25)
+    q2 = groups.quantile(q=0.5)
+    q3 = groups.quantile(q=0.75)
+    iqr = q3 - q1
+    upper = q3 + 1.5*iqr
+    lower = q1 - 1.5*iqr
+    
+    # find the outliers for each category
+    def outliers(group):
+        alternative = group.name
+        return group[(group[unit] > upper.loc[alternative][unit]) | (group[unit] < lower.loc[alternative][unit])][unit]
+    out = groups.apply(outliers).dropna()
+    
+    # prepare outlier data for plotting, we need coordinates for every outlier.
+    outx = []
+    outy = []
+    if not out.empty:
+        for alternative in alternatives:
+            # only add outliers if they exist
+            if not out.loc[alternative].empty:
+                for value in out.loc[alternative]:
+                    outx.append(alternative)
+                    outy.append(value)
+    
+    
+    
+    # if no outliers, shrink lengths of stems to be no longer than the minimums or maximums
+    qmin = groups.quantile(q=0.00)
+    qmax = groups.quantile(q=1.00)
+    upper.score = [min([x,y]) for (x,y) in zip(list(qmax.loc[:,unit]),upper[unit])]
+    lower.score = [max([x,y]) for (x,y) in zip(list(qmin.loc[:,unit]),lower[unit])]
+    
+    
+    source_box = ColumnDataSource(
+                                    data = {
+                                        'alternatives' : alternatives,
+                                        'upper' : upper[unit],
+                                        'lower' : lower[unit],
+                                        'q1': q1[unit],
+                                        'q2': q2[unit],
+                                        'q3': q3[unit],
+                                        
+                                        }
+            )
+    
+    source_outlier = ColumnDataSource(
+                                        data = {
+                                                'outx':outx,
+                                                'outy':outy
+                                                })
+
+    
+    
+    
+    
+    
+    return (source_ace, source_box, source_outlier)
 
 def make_plot(source, title):
     p = figure(width=1000, height=500) 
@@ -54,6 +113,28 @@ def make_plot(source, title):
                     legend = 'legend'
                 )
     p.x_range = Range1d(100,0)
+    return p
+
+def boxplot(source_box, source_outlier, alternatives):
+    p = figure(tools="save", background_fill_color="#EFE8E2", title="", x_range=alternatives)
+    p.segment('alternatives', 'upper', 'alternatives', 'q3', source = source_box, line_color="black")
+    p.segment('alternatives', 'lower', 'alternatives', 'q1', source = source_box, line_color="black")
+    
+    # boxes
+    p.vbar('alternatives', 0.7, 'q2', 'q3',source = source_box, fill_color="#E08E79", line_color="black")
+    p.vbar('alternatives', 0.7, 'q1', 'q2', source = source_box, fill_color="#3B8686", line_color="black")
+    
+    # whiskers (almost-0 height rects simpler than segments)
+    p.rect('alternatives', 'lower',  0.2, 0.01, source = source_box,line_color="black")
+    p.rect('alternatives', 'upper',  0.2, 0.01,source = source_box, line_color="black")
+    
+    
+    p.circle('outx', 'outy', source = source_outlier, size=6, color="#F38630", fill_alpha=0.6)
+    
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = "white"
+    p.grid.grid_line_width = 2
+    p.xaxis.major_label_text_font_size="12pt"
     return p
 
 def update_plot(attrname, old, new):
@@ -111,7 +192,8 @@ for csv in data_list:
     locations = get_locations(df)
     location_select = Select(value=location, title='locations', options=locations['locations'])
     source = get_dataset(df, location, data_units)
-    plot = make_plot(source, name)
+    source_ace = source[0]
+    plot = make_plot(source_ace, name)
     select_plot_list = [location_select, plot]
    
     dictionary.update(
@@ -121,7 +203,7 @@ for csv in data_list:
                                  'name':name,
                                  'data_units':data_units,
                                  'locations':locations,
-                                 'source':source,
+                                 'source':source_ace,
                                  'plot':plot,
                                  'select_plot_list':select_plot_list,
                                  'location_select':location_select
