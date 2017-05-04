@@ -44,13 +44,13 @@ poolElevation.rename(columns={'Elevation_ace_data':'Elevation'}, inplace=True)
 poolDraft = poolDraft[(poolDraft.Label == u'dates 30Apr')].reset_index()
 maxOutFlow['kcfs'] = maxOutFlow['CFS_ace_data']/1000
 
-maxOutFlow.name = 'maxOutFlow'
-poolStorage.name = 'poolStorage'
-poolMaxStorage.name = 'poolMaxStorage'
-poolElevation.name = 'poolElevation'
-poolMaxElevation.name = 'poolMaxElevation'
-poolDraft.name = 'poolDraft' 
-poolMaxDraft.name = 'poolMaxDraft'
+maxOutFlow.name = 'Max_outflow'
+poolStorage.name = 'Pool_storage'
+poolMaxStorage.name = 'Pool_max storage'
+poolElevation.name = 'Pool_elevation'
+poolMaxElevation.name = 'Pool_max_elevation'
+poolDraft.name = 'Pool_draft' 
+poolMaxDraft.name = 'Pool_max_draft'
 
 
 
