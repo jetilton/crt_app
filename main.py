@@ -57,16 +57,36 @@ def make_plot(source, title):
     return p
 
 def update_plot(attrname, old, new):
-    for key in dictionary.keys():
-        location = dictionary[key]['location_select'].value
-        src = get_dataset(dictionary[key]['df'],
-                                 location, 
-                                 dictionary[key]['data_units'])
-        source.data.update(src.data)
+    location_max_outflow = dictionary['Max outflow']['location_select'].value
+    src_max_outflow = get_dataset(dictionary['Max outflow']['df'],location_max_outflow, dictionary['Max outflow']['data_units'])
+    dictionary['Max outflow']['source'].data.update(src_max_outflow.data)
 
+    location_pool_draft = dictionary['Pool draft']['location_select'].value
+    src_pool_draft = get_dataset(dictionary['Pool draft']['df'],location_pool_draft, dictionary['Pool draft']['data_units'])
+    dictionary['Pool draft']['source'].data.update(src_pool_draft.data)
     
-   
- 
+    location_pool_max_draft = dictionary['Pool max draft']['location_select'].value
+    src_pool_max_draft = get_dataset(dictionary['Pool max draft']['df'],location_pool_max_draft, dictionary['Pool max draft']['data_units'])
+    dictionary['Pool max draft']['source'].data.update(src_pool_max_draft.data)
+    
+    location_pool_storage = dictionary['Pool storage']['location_select'].value
+    src_pool_storage = get_dataset(dictionary['Pool storage']['df'],location_pool_storage, dictionary['Pool storage']['data_units'])
+    dictionary['Pool storage']['source'].data.update(src_pool_storage.data)
+    
+    location_pool_max_storage = dictionary['Pool max storage']['location_select'].value
+    src_pool_max_storage = get_dataset(dictionary['Pool max storage']['df'],location_pool_max_storage, dictionary['Pool max storage']['data_units'])
+    dictionary['Pool max storage']['source'].data.update(src_pool_max_storage.data)
+    
+    location_pool_elevation = dictionary['Pool elevation']['location_select'].value
+    src_pool_elevation = get_dataset(dictionary['Pool elevation']['df'],location_pool_elevation, dictionary['Pool elevation']['data_units'])
+    dictionary['Pool elevation']['source'].data.update(src_pool_elevation.data)
+    
+    location_pool_max_elevation = dictionary['Pool max elevation']['location_select'].value
+    src_pool_max_elevation = get_dataset(dictionary['Pool max elevation']['df'],location_pool_max_elevation, dictionary['Pool max elevation']['data_units'])
+    dictionary['Pool max elevation']['source'].data.update(src_pool_max_elevation.data)
+
+
+
 location = 'LIBBY'
 
 run_name = 'test_run'
@@ -93,6 +113,7 @@ for csv in data_list:
     source = get_dataset(df, location, data_units)
     plot = make_plot(source, name)
     select_plot_list = [location_select, plot]
+   
     dictionary.update(
                         {name:
                             {
@@ -108,11 +129,17 @@ for csv in data_list:
                         }
                     )
     print dictionary.keys()
-    location_select.on_change('value', update_plot)
 
+
+dictionary['Max outflow']['location_select'].on_change('value', update_plot)
+dictionary['Pool draft']['location_select'].on_change('value', update_plot)
+dictionary['Pool max draft']['location_select'].on_change('value', update_plot)
+dictionary['Pool storage']['location_select'].on_change('value', update_plot)
+dictionary['Pool max storage']['location_select'].on_change('value', update_plot)
+dictionary['Pool elevation']['location_select'].on_change('value', update_plot)
+dictionary['Pool max elevation']['location_select'].on_change('value', update_plot)
 
 layout_list = [dictionary[key]['select_plot_list'] for key in dictionary.keys()]
-
 
 
 
