@@ -139,32 +139,53 @@ def boxplot(source_box, source_outlier, alternatives):
 
 def update_plot(attrname, old, new):
     location_max_outflow = dictionary['Max outflow']['location_select'].value
-    src_max_outflow = get_dataset(dictionary['Max outflow']['df'],location_max_outflow, dictionary['Max outflow']['data_units'])
-    dictionary['Max outflow']['source'].data.update(src_max_outflow.data)
+    source_max_outflow = get_dataset(dictionary['Max outflow']['df'],
+                                     location_max_outflow, 
+                                     dictionary['Max outflow']['data_units'])
+    source_max_outflow_ace = source_max_outflow[0]
+    dictionary['Max outflow']['source'].data.update(source_max_outflow_ace.data)
 
     location_pool_draft = dictionary['Pool draft']['location_select'].value
-    src_pool_draft = get_dataset(dictionary['Pool draft']['df'],location_pool_draft, dictionary['Pool draft']['data_units'])
-    dictionary['Pool draft']['source'].data.update(src_pool_draft.data)
+    source_pool_draft = get_dataset(dictionary['Pool draft']['df'],
+                                    location_pool_draft, 
+                                    dictionary['Pool draft']['data_units'])
+    source_pool_draft_ace = source_pool_draft[0]
+    dictionary['Pool draft']['source'].data.update(source_pool_draft_ace.data)
     
     location_pool_max_draft = dictionary['Pool max draft']['location_select'].value
-    src_pool_max_draft = get_dataset(dictionary['Pool max draft']['df'],location_pool_max_draft, dictionary['Pool max draft']['data_units'])
-    dictionary['Pool max draft']['source'].data.update(src_pool_max_draft.data)
+    source_pool_max_draft = get_dataset(dictionary['Pool max draft']['df'],
+                                        location_pool_max_draft, 
+                                        dictionary['Pool max draft']['data_units'])
+    source_pool_max_draft_ace = source_pool_max_draft[0]
+    dictionary['Pool max draft']['source'].data.update(source_pool_max_draft_ace.data)
     
     location_pool_storage = dictionary['Pool storage']['location_select'].value
-    src_pool_storage = get_dataset(dictionary['Pool storage']['df'],location_pool_storage, dictionary['Pool storage']['data_units'])
-    dictionary['Pool storage']['source'].data.update(src_pool_storage.data)
+    source_pool_storage = get_dataset(dictionary['Pool storage']['df'],
+                                      location_pool_storage, 
+                                      dictionary['Pool storage']['data_units'])
+    source_pool_storage_ace = source_pool_storage[0]
+    dictionary['Pool storage']['source'].data.update(source_pool_storage_ace.data)
     
     location_pool_max_storage = dictionary['Pool max storage']['location_select'].value
-    src_pool_max_storage = get_dataset(dictionary['Pool max storage']['df'],location_pool_max_storage, dictionary['Pool max storage']['data_units'])
-    dictionary['Pool max storage']['source'].data.update(src_pool_max_storage.data)
+    source_pool_max_storage = get_dataset(dictionary['Pool max storage']['df'],
+                                          location_pool_max_storage, 
+                                          dictionary['Pool max storage']['data_units'])
+    source_pool_max_storage_ace = source_pool_max_storage[0]
+    dictionary['Pool max storage']['source'].data.update(source_pool_max_storage_ace.data)
     
     location_pool_elevation = dictionary['Pool elevation']['location_select'].value
-    src_pool_elevation = get_dataset(dictionary['Pool elevation']['df'],location_pool_elevation, dictionary['Pool elevation']['data_units'])
-    dictionary['Pool elevation']['source'].data.update(src_pool_elevation.data)
+    source_pool_elevation = get_dataset(dictionary['Pool elevation']['df'],
+                                        location_pool_elevation, 
+                                        dictionary['Pool elevation']['data_units'])
+    source_pool_elevation_ace = source_pool_elevation[0]
+    dictionary['Pool elevation']['source'].data.update(source_pool_elevation_ace.data)
     
     location_pool_max_elevation = dictionary['Pool max elevation']['location_select'].value
-    src_pool_max_elevation = get_dataset(dictionary['Pool max elevation']['df'],location_pool_max_elevation, dictionary['Pool max elevation']['data_units'])
-    dictionary['Pool max elevation']['source'].data.update(src_pool_max_elevation.data)
+    source_pool_max_elevation = get_dataset(dictionary['Pool max elevation']['df'],
+                                            location_pool_max_elevation, 
+                                            dictionary['Pool max elevation']['data_units'])
+    source_pool_max_elevation_ace = source_pool_max_elevation[0]
+    dictionary['Pool max elevation']['source'].data.update(source_pool_max_elevation_ace.data)
 
 
 
